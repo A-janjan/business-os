@@ -1,0 +1,7 @@
+{
+  "name": "pre-meeting-brief",
+  "nodes": [],
+  "connections": {},
+  "settings": { "executionOrder": "v1" },
+  "meta": { "template": true, "source": "business-os/workflows/n8n/pre-meeting-brief.json", "status": "skeleton — implement or import a full flow" }
+}

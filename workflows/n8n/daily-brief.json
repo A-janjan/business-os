@@ -1,0 +1,69 @@
+{
+  "name": "Daily Business Brief",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "cronExpression", "expression": "0 6 * * *" }]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "id": "schedule",
+      "name": "Every day at 06:00"
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.BUSINESS_OS_BASE_URL }}/api/dashboard/summary",
+        "authentication": "header",
+        "headerParameters": [
+          { "name": "Authorization", "value": "={{ $env.BUSINESS_OS_TOKEN }}" }
+        ]
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 300],
+      "id": "fetch-dashboard",
+      "name": "Fetch dashboard summary"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BUSINESS_OS_BASE_URL }}/api/reports/daily-brief",
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "={{ $env.BUSINESS_OS_TOKEN }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "bodyParameters": { "parameters": [] },
+        "contentType": "json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [720, 300],
+      "id": "generate-brief",
+      "name": "Generate AI daily brief"
+    },
+    {
+      "parameters": {
+        "subject": "Daily Business Brief",
+        "text": "={{ $('Generate AI daily brief').item.json.body }}"
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [960, 300],
+      "id": "notify",
+      "name": "Notify user"
+    }
+  ],
+  "connections": {
+    "Every day at 06:00": { "main": [[{ "node": "Fetch dashboard summary", "type": "main", "index": 0 }]] },
+    "Fetch dashboard summary": { "main": [[{ "node": "Generate AI daily brief", "type": "main", "index": 0 }]] },
+    "Generate AI daily brief": { "main": [[{ "node": "Notify user", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "meta": { "template": true, "source": "business-os/workflows/n8n/daily-brief.json" }
+}

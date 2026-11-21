@@ -1,0 +1,7 @@
+{
+  "name": "weekly-review",
+  "nodes": [],
+  "connections": {},
+  "settings": { "executionOrder": "v1" },
+  "meta": { "template": true, "source": "business-os/workflows/n8n/weekly-review.json", "status": "skeleton — implement or import a full flow" }
+}

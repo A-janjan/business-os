@@ -1,0 +1,29 @@
+# data and secrets
+.env
+data/
+*.db
+*.db-journal
+
+# node / build
+node_modules/
+dist/
+coverage/
+.vite/
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+
+# alembic cache
+alembic/versions/.DS_Store
+
+# OS
+.DS_Store
+Thumbs.db
+
+# logs
+*.log

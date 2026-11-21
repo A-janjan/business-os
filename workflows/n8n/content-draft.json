@@ -1,0 +1,7 @@
+{
+  "name": "content-draft",
+  "nodes": [],
+  "connections": {},
+  "settings": { "executionOrder": "v1" },
+  "meta": { "template": true, "source": "business-os/workflows/n8n/content-draft.json", "status": "skeleton — implement or import a full flow" }
+}

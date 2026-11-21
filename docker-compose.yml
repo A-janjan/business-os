@@ -1,0 +1,61 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: business-os-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: business_os
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      POSTGRES_DB: business_os
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U business_os"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/Dockerfile.api
+    container_name: business-os-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ENV: production
+      DATABASE_URL: postgresql+psycopg://business_os:${POSTGRES_PASSWORD:-change-me}@db:5432/business_os
+      AUTH_SECRET: ${AUTH_SECRET:-change-me-in-production}
+      KNOWLEDGE_DIR: /data/knowledge
+      AI_BASE_URL: ${AI_BASE_URL:-}
+      AI_API_KEY: ${AI_API_KEY:-}
+      AI_MODEL: ${AI_MODEL:-}
+      N8N_ENABLED: ${N8N_ENABLED:-false}
+      N8N_WEBHOOK_BASE_URL: ${N8N_WEBHOOK_BASE_URL:-}
+      N8N_API_KEY: ${N8N_API_KEY:-}
+    ports:
+      - "8000:8000"
+    volumes:
+      - knowledge-data:/data/knowledge
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')\""]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/Dockerfile.web
+    container_name: business-os-web
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "5173:80"
+
+volumes:
+  postgres-data:
+  knowledge-data:

@@ -29,3 +29,6 @@ Thumbs.db
 *.log
 .pytest_cache/
 .vite/
+
+
+repomix-output.xml

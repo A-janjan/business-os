@@ -30,7 +30,13 @@ function Protected() {
   }, [loading, user, navigate]);
 
   if (loading) {
-    return <FullScreen><div className="loading-state" style={{ minHeight: "100vh" }}><div className="spinner" /></div></FullScreen>;
+    return (
+      <FullScreen>
+        <div className="loading-state" style={{ minHeight: "100vh" }}>
+          <div className="spinner" />
+        </div>
+      </FullScreen>
+    );
   }
   if (!user) return null;
   return <Layout />;
@@ -42,22 +48,26 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/*" element={<Protected />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/clients" element={<Clients />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/tasks" element={<Tasks />} />
-            <Route path="/knowledge" element={<Knowledge />} />
-            <Route path="/notes" element={<DailyNotes />} />
-            <Route path="/content" element={<ContentStudio />} />
-            <Route path="/finance" element={<Finance />} />
-            <Route path="/research" element={<Research />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/ai" element={<AIAgents />} />
-            <Route path="/automation" element={<Automations />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+
+          {/* Protected shell — parent path is "/", children are relative */}
+          <Route path="/" element={<Protected />}>
+            <Route index element={<Dashboard />} />
+            <Route path="clients" element={<Clients />} />
+            <Route path="projects" element={<Projects />} />
+            <Route path="tasks" element={<Tasks />} />
+            <Route path="knowledge" element={<Knowledge />} />
+            <Route path="notes" element={<DailyNotes />} />
+            <Route path="content" element={<ContentStudio />} />
+            <Route path="finance" element={<Finance />} />
+            <Route path="research" element={<Research />} />
+            <Route path="reports" element={<Reports />} />
+            <Route path="ai" element={<AIAgents />} />
+            <Route path="automation" element={<Automations />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
+
+          {/* Sibling catch-all, NOT a parent of the protected tree */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
